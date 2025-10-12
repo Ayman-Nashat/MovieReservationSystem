@@ -5,6 +5,12 @@ VisualStudioVersion = 17.11.35208.52
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Movie Reservation System", "Movie Reservation System\Movie Reservation System.csproj", "{EE6D0C08-3C7C-448B-B87F-355EF9DC58A8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieReservationSystem.Core", "MovieReservationSystem.Core\MovieReservationSystem.Core.csproj", "{C78A4472-70C4-4510-BFE4-6B69FCA2EE43}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieReservationSystem.Service", "MovieReservationSystem.Service\MovieReservationSystem.Service.csproj", "{4A088445-FE87-46C7-A0DE-4600C2D204B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieReservationSystem.Repository", "MovieReservationSystem.Repository\MovieReservationSystem.Repository.csproj", "{1E303AA7-3E89-4BAA-BE5B-411600FBF95D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +21,18 @@ Global
 		{EE6D0C08-3C7C-448B-B87F-355EF9DC58A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE6D0C08-3C7C-448B-B87F-355EF9DC58A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE6D0C08-3C7C-448B-B87F-355EF9DC58A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C78A4472-70C4-4510-BFE4-6B69FCA2EE43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C78A4472-70C4-4510-BFE4-6B69FCA2EE43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C78A4472-70C4-4510-BFE4-6B69FCA2EE43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C78A4472-70C4-4510-BFE4-6B69FCA2EE43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A088445-FE87-46C7-A0DE-4600C2D204B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A088445-FE87-46C7-A0DE-4600C2D204B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A088445-FE87-46C7-A0DE-4600C2D204B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A088445-FE87-46C7-A0DE-4600C2D204B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E303AA7-3E89-4BAA-BE5B-411600FBF95D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E303AA7-3E89-4BAA-BE5B-411600FBF95D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E303AA7-3E89-4BAA-BE5B-411600FBF95D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E303AA7-3E89-4BAA-BE5B-411600FBF95D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
