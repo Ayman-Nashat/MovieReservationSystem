@@ -19,7 +19,17 @@ namespace Movie_Reservation_System.Controllers
         public async Task<IActionResult> GetAll()
         {
             var movies = await _movieService.GetAllMoviesAsync();
-            return Ok(movies);
+
+            var movieDtos = movies.Select(m => new MovieDTO
+            {
+                Id = m.Id,
+                Title = m.Title,
+                Description = m.Description,
+                DurationMinutes = m.DurationMinutes,
+                Genres = m.MovieGenres.Select(mg => mg.Genre.Name).ToList()
+            });
+
+            return Ok(movieDtos);
         }
 
         [HttpGet("{id}")]
@@ -27,9 +37,18 @@ namespace Movie_Reservation_System.Controllers
         {
             var movie = await _movieService.GetMovieByIdAsync(id);
             if (movie == null)
-                return NotFound($"Movie with ID {id} not found.");
+                return NotFound();
 
-            return Ok(movie);
+            var movieDto = new MovieDTO
+            {
+                Id = movie.Id,
+                Title = movie.Title,
+                Description = movie.Description,
+                DurationMinutes = movie.DurationMinutes,
+                Genres = movie.MovieGenres.Select(mg => mg.Genre.Name).ToList()
+            };
+
+            return Ok(movieDto);
         }
 
         [HttpPost]
@@ -40,7 +59,6 @@ namespace Movie_Reservation_System.Controllers
             Movie movie1 = new Movie
             {
                 Title = movie.Title,
-                Genre = movie.Genre,
                 Description = movie.Description,
                 DurationMinutes = movie.DurationMinutes
             };
@@ -50,7 +68,7 @@ namespace Movie_Reservation_System.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] Movie movie)
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateMovieDTO movie)
         {
             if (id != movie.Id)
                 return BadRequest("ID in URL and body do not match.");
@@ -60,10 +78,17 @@ namespace Movie_Reservation_System.Controllers
                 return NotFound($"Movie with ID {id} not found.");
 
             existing.Title = movie.Title;
-            existing.Genre = movie.Genre;
 
-            await _movieService.AddMovieAsync(existing);
-            return Ok(existing);
+            Movie updatedMovie = new Movie
+            {
+                Id = movie.Id,
+                Title = movie.Title,
+                Description = movie.Description,
+                DurationMinutes = movie.DurationMinutes
+            };
+
+            await _movieService.AddMovieAsync(updatedMovie);
+            return Ok(updatedMovie);
         }
 
         [HttpDelete("{id}")]

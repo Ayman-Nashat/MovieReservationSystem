@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MovieReservationSystem.Core.Entities;
 using MovieReservationSystem.Core.Repositort.Contract;
+using MovieReservationSystem.Core.Repository.Contract;
 using MovieReservationSystem.Core.Service.Contract;
 using MovieReservationSystem.Repository.Data;
 using MovieReservationSystem.Repository.Repositories;
@@ -32,6 +33,9 @@ namespace Movie_Reservation_System
             //Depandancy Injection
             builder.Services.AddScoped<IMovieService, MovieService>();
             builder.Services.AddScoped<IMovieRepository, MovieRepository>();
+            builder.Services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
+            builder.Services.AddScoped<IGenreService, GenreService>();
+
 
 
             var app = builder.Build();

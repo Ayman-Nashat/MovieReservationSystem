@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MovieReservationSystem.Core\MovieReservationSystem.Core.csproj" />
+    <ProjectReference Include="..\MovieReservationSystem.Repository\MovieReservationSystem.Repository.csproj" />
   </ItemGroup>
 
 </Project>

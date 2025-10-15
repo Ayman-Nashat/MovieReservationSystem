@@ -21,14 +21,24 @@ namespace MovieReservationSystem.Repository.Repositories
         => _context.Movies.Remove(movie);
 
         public async Task<IEnumerable<Movie>> GetAllAsync()
-        => await _context.Movies.ToListAsync();
+        {
+            return await _context.Movies
+                .Include(m => m.MovieGenres)
+                .ThenInclude(mg => mg.Genre)
+                .ToListAsync();
+        }
 
         public async Task<Movie?> GetByIdAsync(int id)
-        => await _context.Movies.FindAsync(id);
+        {
+            return await _context.Movies
+                .Include(m => m.MovieGenres)
+                .ThenInclude(mg => mg.Genre)
+                .FirstOrDefaultAsync(m => m.Id == id);
+        }
 
         public async Task<IEnumerable<Movie>> GetByGenreAsync(string genre)
         => await _context.Movies
-                .Where(m => m.Genre.ToLower().Contains(genre.ToLower()))
+                .Where(m => m.MovieGenres.Any(mg => mg.Genre.Name.ToLower().Contains(genre.ToLower())))
                 .ToListAsync();
 
         public async Task<IEnumerable<Movie>> GetByNameAsync(string name)
