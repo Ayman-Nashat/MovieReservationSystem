@@ -18,9 +18,11 @@ namespace MovieReservationSystem.Repository.Data
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<MovieGenre> MovieGenres { get; set; }
+        public DbSet<SeatHold> SeatHolds { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            base.OnModelCreating(builder);
             builder.Entity<Seat>()
                 .HasOne(s => s.Theater)
                 .WithMany(t => t.Seats)
@@ -49,14 +51,14 @@ namespace MovieReservationSystem.Repository.Data
                 .HasOne(r => r.User)
                 .WithMany(u => u.Reservations)
                 .HasForeignKey(r => r.UserId)
-                .OnDelete(DeleteBehavior.Restrict); base.OnModelCreating(builder);
-
-            builder.Entity<Seat>()
-                .HasIndex(s => new { s.TheaterId, s.SeatNumber })
-                .IsUnique();
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Reservation>()
                 .HasIndex(r => new { r.ShowtimeId, r.SeatId })
+                .IsUnique();
+
+            builder.Entity<Seat>()
+                .HasIndex(s => new { s.TheaterId, s.SeatNumber })
                 .IsUnique();
 
             builder.Entity<Showtime>()
@@ -64,6 +66,13 @@ namespace MovieReservationSystem.Repository.Data
 
             builder.Entity<MovieGenre>()
                 .HasKey(mg => new { mg.MovieId, mg.GenreId });
+
+            builder.Entity<SeatHold>()
+                .HasIndex(h => new { h.ShowtimeId, h.SeatId });
+
+            builder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
 
         }
     }
