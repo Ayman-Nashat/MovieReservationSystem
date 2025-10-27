@@ -9,6 +9,7 @@ using MovieReservationSystem.Core.Repository.Contract;
 using MovieReservationSystem.Core.Service.Contract;
 using MovieReservationSystem.Core.Services;
 using MovieReservationSystem.Repository.Data;
+using MovieReservationSystem.Repository.Data.Configurations;
 using MovieReservationSystem.Repository.Repositories;
 using MovieReservationSystem.Service;
 
@@ -50,10 +51,12 @@ namespace Movie_Reservation_System
             builder.Services.AddScoped<IReservationService, ReservationService>();
             builder.Services.AddTransient<IMailService, EmailSettings>();
 
+            builder.Services.Configure<AdminConfiguration>(builder.Configuration.GetSection("AdminConfiguration"));
             builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
             // Load additional local config (if file exists)
-            builder.Configuration.AddJsonFile("appsettings.Secrets.json", optional: true, reloadOnChange: true);
-
+            builder.Configuration
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile("appsettings.Secrets.json", optional: true, reloadOnChange: true);
 
             var app = builder.Build();
 
