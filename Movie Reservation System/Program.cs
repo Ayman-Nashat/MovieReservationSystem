@@ -53,6 +53,7 @@ namespace Movie_Reservation_System
 
             builder.Services.Configure<AdminConfiguration>(builder.Configuration.GetSection("AdminConfiguration"));
             builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+
             // Load additional local config (if file exists)
             builder.Configuration
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
