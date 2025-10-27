@@ -16,7 +16,7 @@ namespace Movie_Reservation_System
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -51,8 +51,21 @@ namespace Movie_Reservation_System
             builder.Services.AddTransient<IMailService, EmailSettings>();
 
             builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+            // Load additional local config (if file exists)
+            builder.Configuration.AddJsonFile("appsettings.Secrets.json", optional: true, reloadOnChange: true);
+
 
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var userManager = services.GetRequiredService<UserManager<User>>();
+                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                var configuration = services.GetRequiredService<IConfiguration>();
+
+                await AppDbSeeder.SeedAdminAsync(userManager, roleManager, configuration);
+            }
 
             // Middleware
             if (app.Environment.IsDevelopment())

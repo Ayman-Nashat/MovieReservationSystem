@@ -9,7 +9,7 @@ namespace Movie_Reservation_System.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController(UserManager<User> _userManager, SignInManager<User> _signInManager, IMailService _mailService, ILogger<AccountController> _logger) : ControllerBase
+    public class AccountController(UserManager<User> _userManager, SignInManager<User> _signInManager, IMailService _mailService, ILogger<AccountController> _logger, RoleManager<IdentityRole> _roleManager) : ControllerBase
     {
 
         [HttpPost("register")]
@@ -44,6 +44,10 @@ namespace Movie_Reservation_System.Controllers
                 Body = $"Please confirm your email by clicking this link: \n{confirmationLink}"
             };
 
+            if (await _roleManager.RoleExistsAsync("User"))
+                await _userManager.AddToRoleAsync(user, "User");
+            else
+                return BadRequest("User role does not exist");
             _mailService.SendEmail(email);
 
             return Ok(new { status = "Success", message = "User created & confirmation email sent successfully." });
