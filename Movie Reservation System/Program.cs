@@ -47,6 +47,7 @@ namespace Movie_Reservation_System
             builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
             builder.Services.AddScoped<ISeatHoldRepository, SeatHoldRepository>();
             builder.Services.AddScoped<IMovieService, MovieService>();
+            builder.Services.AddScoped<ITheaterService, TheaterService>();
             builder.Services.AddScoped<IGenreService, GenreService>();
             builder.Services.AddScoped<IReservationService, ReservationService>();
             builder.Services.AddTransient<IMailService, EmailSettings>();

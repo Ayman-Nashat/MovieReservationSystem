@@ -20,10 +20,10 @@ namespace MovieReservationSystem.Service
             => await _movieRepository.GetByIdAsync(id);
 
         public async Task<IEnumerable<Movie>> SearchByNameAsync(string name)
-            => await _movieRepository.GetByNameAsync(name);
+            => await _movieRepository.SearchByNameAsync(name);
 
-        public async Task<IEnumerable<Movie>> SearchByGenreAsync(string genre)
-            => await _movieRepository.GetByGenreAsync(genre);
+        //public async Task<IEnumerable<Movie>> SearchByGenreAsync(string genre)
+        //    => await _movieRepository.GetByGenreAsync(genre);
 
         public async Task AddMovieAsync(Movie movie)
         {

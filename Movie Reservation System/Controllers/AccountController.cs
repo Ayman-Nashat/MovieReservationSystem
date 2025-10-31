@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Movie_Reservation_System.DTOs.Account;
 using MovieReservationSystem.Core.Entities;
 using MovieReservationSystem.Core.Service.Contract;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace Movie_Reservation_System.Controllers
 {
@@ -53,6 +55,7 @@ namespace Movie_Reservation_System.Controllers
             return Ok(new { status = "Success", message = "User created & confirmation email sent successfully." });
         }
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginDTO model)
         {
             if (!ModelState.IsValid)
@@ -63,13 +66,37 @@ namespace Movie_Reservation_System.Controllers
                 return Unauthorized("Invalid email or password.");
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
-
             if (!result.Succeeded)
                 return Unauthorized("Invalid email or password.");
 
-            // ✅ Later, I will replace this with JWT token logic
-            return Ok(new { message = "Login successful!" });
+            var roles = await _userManager.GetRolesAsync(user);
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email)
+            };
+
+            foreach (var role in roles)
+                claims.Add(new Claim(ClaimTypes.Role, role));
+
+            //// 5️⃣ Generate JWT (you’ll implement ITokenService)
+            //var token = _tokenService.GenerateToken(claims);
+
+            return Ok(new
+            {
+                message = "Login successful!",
+                //token,
+                user = new
+                {
+                    user.UserName,
+                    user.Email,
+                    Role = roles.FirstOrDefault()
+                }
+            });
         }
+
         [HttpGet("ConfirmEmail")]
         public async Task<IActionResult> ConfirmEmail(string token, string email)
         {
@@ -115,7 +142,6 @@ namespace Movie_Reservation_System.Controllers
 
         //    return Ok(new { message = "Reset password link has been sent to your email." });
         //}
-
         [HttpPost("ForgotPassword")]
         [AllowAnonymous]
         public async Task<IActionResult> ForgotPassword(string email)

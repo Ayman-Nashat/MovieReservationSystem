@@ -1,8 +1,7 @@
 ﻿namespace MovieReservationSystem.Core.Entities
 {
-    public class Movie
+    public class Movie : BaseEntity<int>
     {
-        public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public int DurationMinutes { get; set; }

@@ -74,6 +74,10 @@ namespace MovieReservationSystem.Repository.Data
                 .HasIndex(u => u.Email)
                 .IsUnique();
 
+            builder.Entity<Theater>()
+               .HasIndex(t => new { t.Name, t.Location })
+               .IsUnique();
+
         }
     }
 }
