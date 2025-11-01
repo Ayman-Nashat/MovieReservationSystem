@@ -157,7 +157,7 @@ See [SYSTEM_DESCRIPTION.md](SYSTEM_DESCRIPTION.md) for detailed entity relations
 
 ### Optional Configuration
 
-- **Admin Account**: Configured in `appsettings.json` → `AdminConfiguration`
+- **Admin Account**: Configured in `appsettings.Secrets.json` → `AdminConfiguration`
 - **Secrets**: Can be stored in `appsettings.Secrets.json` (not tracked in git)
 
 ## 🔐 Security
