@@ -181,15 +181,6 @@ For detailed technical documentation, architecture details, and complete API ref
 
 On first run, an admin user is automatically seeded based on `AdminConfiguration` in `appsettings.json`. Make sure to configure this section or modify the default credentials.
 
-## 📄 License
-
-[Add your license here]
-
-## 🤝 Contributing
-
-[Add contribution guidelines here]
-
----
 
 **Note**: This README provides a quick overview. For detailed technical information, entity relationships, and architecture details, refer to `SYSTEM_DESCRIPTION.md`.
 
