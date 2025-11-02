@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MovieReservationSystem.Core\MovieReservationSystem.Core.csproj" />
     <ProjectReference Include="..\MovieReservationSystem.Repository\MovieReservationSystem.Repository.csproj" />
     <ProjectReference Include="..\MovieReservationSystem.Service\MovieReservationSystem.Service.csproj" />
   </ItemGroup>

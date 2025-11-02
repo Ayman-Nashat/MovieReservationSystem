@@ -1,13 +1,14 @@
 ﻿namespace MovieReservationSystem.Core.Entities
 {
-    public class Showtime
+    public class Showtime : BaseEntity<int>
     {
-        public int Id { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
 
         public int MovieId { get; set; }
         public int TheaterId { get; set; }
+        public decimal TicketPrice { get; set; }
+
 
         public Movie Movie { get; set; }
         public Theater Theater { get; set; }

@@ -9,6 +9,6 @@ namespace MovieReservationSystem.Core.Repository.Contract
         Task<TEntity?> GetByIdAsync(Tkey id);
         void Remove(TEntity entity);
         void Update(TEntity entity);
-
+        Task<int> SaveChangesAsync();
     }
 }

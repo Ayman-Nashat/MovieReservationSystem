@@ -12,5 +12,6 @@ namespace MovieReservationSystem.Repository.Repositories
         public async Task<TEntity?> GetByIdAsync(Tkey id) => await _dbContext.Set<TEntity>().FindAsync(keyValues: id);
         public void Remove(TEntity entity) => _dbContext.Set<TEntity>().Remove(entity);
         public void Update(TEntity entity) => _dbContext.Set<TEntity>().Update(entity);
+        public async Task<int> SaveChangesAsync() => await _dbContext.SaveChangesAsync();
     }
 }

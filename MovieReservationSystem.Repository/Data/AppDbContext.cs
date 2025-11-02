@@ -78,6 +78,11 @@ namespace MovieReservationSystem.Repository.Data
                .HasIndex(t => new { t.Name, t.Location })
                .IsUnique();
 
+            builder.Entity<Showtime>()
+                .Property(s => s.TicketPrice)
+                .HasPrecision(18, 2);
+
+
         }
     }
 }

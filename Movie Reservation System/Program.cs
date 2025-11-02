@@ -41,16 +41,21 @@ namespace Movie_Reservation_System
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            //Depandancy Injection
+            #region Depandancy Injection
             builder.Services.AddScoped<IMovieRepository, MovieRepository>();
             builder.Services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
             builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
+            builder.Services.AddScoped<IReservationService, ReservationService>();
             builder.Services.AddScoped<ISeatHoldRepository, SeatHoldRepository>();
             builder.Services.AddScoped<IMovieService, MovieService>();
             builder.Services.AddScoped<ITheaterService, TheaterService>();
+            builder.Services.AddScoped<ITheaterRepository, TheaterRepository>();
             builder.Services.AddScoped<IGenreService, GenreService>();
-            builder.Services.AddScoped<IReservationService, ReservationService>();
             builder.Services.AddTransient<IMailService, EmailSettings>();
+            builder.Services.AddScoped<IShowtimeRepository, ShowtimeRepository>();
+            builder.Services.AddScoped<IShowtimeService, ShowtimeService>();
+
+            #endregion
 
             builder.Services.Configure<AdminConfiguration>(builder.Configuration.GetSection("AdminConfiguration"));
             builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));

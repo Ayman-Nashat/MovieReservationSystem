@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using MovieReservationSystem.Core.Entities;
+﻿using MovieReservationSystem.Core.Entities;
 using MovieReservationSystem.Core.Repository.Contract;
 using MovieReservationSystem.Core.Service.Contract;
 using MovieReservationSystem.Repository.Data;
@@ -8,10 +7,10 @@ namespace MovieReservationSystem.Service
 {
     public class TheaterService : ITheaterService
     {
-        private readonly IGenericRepository<Theater, int> _theaterRepository;
+        private readonly ITheaterRepository _theaterRepository;
         private readonly AppDbContext _context;
 
-        public TheaterService(IGenericRepository<Theater, int> theaterRepository, AppDbContext context)
+        public TheaterService(ITheaterRepository theaterRepository, AppDbContext context)
         {
             _theaterRepository = theaterRepository;
             _context = context;
