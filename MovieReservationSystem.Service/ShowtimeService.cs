@@ -23,9 +23,7 @@ namespace MovieReservationSystem.Service
 
         public async Task<IEnumerable<Showtime>> GetAllShowtimesAsync()
         {
-            var showtimes = await _showtimeRepository.GetAllAsync();
-
-            return showtimes;
+            return await _showtimeRepository.GetAllWithDetailsAsync();
         }
 
         public async Task<Showtime?> GetShowtimeByIdAsync(int id)

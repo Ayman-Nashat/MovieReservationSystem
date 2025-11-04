@@ -52,7 +52,6 @@ namespace Movie_Reservation_System.Controllers
             return Ok(reservations);
         }
 
-        // GET: api/reservations/showtime/{showtimeId}
         [HttpGet("showtime/{showtimeId}")]
         public async Task<IActionResult> GetShowtimeReservations(int showtimeId)
         {
@@ -60,7 +59,6 @@ namespace Movie_Reservation_System.Controllers
             return Ok(reservations);
         }
 
-        // PUT: api/reservations/{id}/confirm
         [HttpPut("{id}/confirm")]
         public async Task<IActionResult> ConfirmReservation(int id)
         {
@@ -75,7 +73,6 @@ namespace Movie_Reservation_System.Controllers
             }
         }
 
-        // DELETE: api/reservations/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> CancelReservation(int id)
         {

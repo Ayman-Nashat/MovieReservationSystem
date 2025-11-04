@@ -1,9 +1,7 @@
 ﻿namespace MovieReservationSystem.Core.Entities
 {
-    public class SeatHold
+    public class SeatHold : BaseEntity<int>
     {
-        public int Id { get; set; }
-
         public int ShowtimeId { get; set; }
         public Showtime Showtime { get; set; } = null!;
 

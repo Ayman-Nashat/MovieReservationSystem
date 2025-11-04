@@ -54,22 +54,6 @@ namespace MovieReservationSystem.Repository.Repositories
                 .ToListAsync();
         }
 
-        //public async Task<IEnumerable<Movie>> GetByGenreAsync(string genre)
-        //{
-        //    if (string.IsNullOrWhiteSpace(genre))
-        //        return Enumerable.Empty<Movie>();
-
-        //    genre = genre.Trim().ToLower();
-
-        //    return await _context.Movies
-        //        .Where(m => m.ToLower().Contains(genre))
-        //        .Include(m => m.Showtimes)
-        //        .ToListAsync();
-        //}
-
-        public async Task<int> SaveChangesAsync() =>
-            await _context.SaveChangesAsync();
-
         public void Delete(Movie movie) =>
             _context.Movies.Remove(movie);
     }

@@ -5,19 +5,21 @@ using MovieReservationSystem.Repository.Data;
 
 namespace MovieReservationSystem.Repository.Repositories
 {
-    public class SeatHoldRepository : ISeatHoldRepository
+    public class SeatHoldRepository : GenericRepository<SeatHold, int>, ISeatHoldRepository
     {
         private readonly AppDbContext _context;
 
-        public SeatHoldRepository(AppDbContext context)
+        public SeatHoldRepository(AppDbContext dbContext) : base(dbContext)
         {
-            _context = context;
+            _context = dbContext;
         }
 
         public async Task<bool> IsSeatHeldAsync(int showtimeId, int seatId)
         {
             return await _context.SeatHolds
-                .AnyAsync(h => h.ShowtimeId == showtimeId && h.SeatId == seatId && h.ExpiresAt > DateTime.UtcNow);
+                .AnyAsync(h => h.ShowtimeId == showtimeId &&
+                               h.SeatId == seatId &&
+                               h.ExpiresAt > DateTime.UtcNow);
         }
 
         public async Task AddHoldAsync(SeatHold hold)
@@ -34,6 +36,13 @@ namespace MovieReservationSystem.Repository.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<SeatHold>> GetHoldsByUserAsync(string userId)
+        {
+            return await _context.SeatHolds
+                .Where(h => h.UserId == userId && h.ExpiresAt > DateTime.UtcNow)
+                .ToListAsync();
+        }
+
         public async Task RemoveHoldsAsync(IEnumerable<SeatHold> holds)
         {
             _context.SeatHolds.RemoveRange(holds);
@@ -42,21 +51,15 @@ namespace MovieReservationSystem.Repository.Repositories
 
         public async Task RemoveExpiredHoldsAsync()
         {
-            var expired = await _context.SeatHolds
+            var expiredHolds = await _context.SeatHolds
                 .Where(h => h.ExpiresAt <= DateTime.UtcNow)
                 .ToListAsync();
 
-            _context.SeatHolds.RemoveRange(expired);
+            if (expiredHolds.Any())
+                _context.SeatHolds.RemoveRange(expiredHolds);
         }
 
-        public async Task<IEnumerable<SeatHold>> GetHoldsByUserAsync(string userId)
-        {
-            return await _context.SeatHolds
-                .Where(h => h.UserId == userId && h.ExpiresAt > DateTime.UtcNow)
-                .ToListAsync();
-        }
-
-        public async Task SaveChangesAsync()
+        public new async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
         }

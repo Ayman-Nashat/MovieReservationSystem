@@ -157,11 +157,6 @@ See [SYSTEM_DESCRIPTION.md](SYSTEM_DESCRIPTION.md) for detailed entity relations
 
 ### Optional Configuration
 
-<<<<<<< HEAD
-- **Admin Account**: Configured in `appsettings.json` → `AdminConfiguration`
-=======
-- **Admin Account**: Configured in `appsettings.Secrets.json` → `AdminConfiguration`
->>>>>>> 2cd86502e1387b2797b1e67d316f8693b5ffa409
 - **Secrets**: Can be stored in `appsettings.Secrets.json` (not tracked in git)
 
 ## 🔐 Security
@@ -185,7 +180,6 @@ For detailed technical documentation, architecture details, and complete API ref
 
 On first run, an admin user is automatically seeded based on `AdminConfiguration` in `appsettings.json`. Make sure to configure this section or modify the default credentials.
 
-<<<<<<< HEAD
 ## 📄 License
 
 [Add your license here]
@@ -195,8 +189,6 @@ On first run, an admin user is automatically seeded based on `AdminConfiguration
 [Add contribution guidelines here]
 
 ---
-=======
->>>>>>> 2cd86502e1387b2797b1e67d316f8693b5ffa409
 
 **Note**: This README provides a quick overview. For detailed technical information, entity relationships, and architecture details, refer to `SYSTEM_DESCRIPTION.md`.
 

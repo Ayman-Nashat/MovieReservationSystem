@@ -14,6 +14,14 @@ namespace MovieReservationSystem.Repository.Repositories
             _context = context;
         }
 
+        public async Task<IEnumerable<Showtime>> GetAllWithDetailsAsync()
+        {
+            return await _context.Showtimes
+                .Include(s => s.Movie)
+                .Include(s => s.Theater)
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<Showtime>> GetShowtimesByMovieIdAsync(int movieId)
         {
             return await _context.Showtimes
