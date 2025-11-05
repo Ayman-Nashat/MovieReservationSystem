@@ -82,7 +82,6 @@ namespace MovieReservationSystem.Repository.Data
                 .Property(s => s.TicketPrice)
                 .HasPrecision(18, 2);
 
-
         }
     }
 }
