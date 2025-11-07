@@ -9,14 +9,13 @@ namespace Movie_Reservation_System.Controllers
     public class SeatHoldController : ControllerBase
     {
         private readonly ISeatHoldService _seatHoldService;
-
         public SeatHoldController(ISeatHoldService seatHoldService)
         {
             _seatHoldService = seatHoldService;
         }
 
         [HttpPost]
-        //[Authorize] 
+        //[Authorize]
         public async Task<IActionResult> HoldSeat([FromBody] HoldSeatRequest dto)
         {
             var userId = User.FindFirst("sub")?.Value ?? User.Identity?.Name;
@@ -67,7 +66,6 @@ namespace Movie_Reservation_System.Controllers
             var result = holds.Select(h => new { h.SeatId, h.UserId, h.ExpiresAt });
             return Ok(result);
         }
-
         [HttpGet("user")]
         //[Authorize]
         public async Task<IActionResult> GetUserHolds()

@@ -15,7 +15,6 @@ namespace Movie_Reservation_System.Controllers
             _reservationService = reservationService;
         }
 
-        // POST: api/reservations
         [HttpPost]
         public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto dto)
         {
@@ -33,7 +32,6 @@ namespace Movie_Reservation_System.Controllers
             }
         }
 
-        // GET: api/reservations/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetReservationById(int id)
         {
@@ -44,7 +42,6 @@ namespace Movie_Reservation_System.Controllers
             return Ok(reservation);
         }
 
-        // GET: api/reservations/user/{userId}
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetUserReservations(string userId)
         {
