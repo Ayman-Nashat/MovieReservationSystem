@@ -9,5 +9,7 @@ namespace MovieReservationSystem.Core.Service.Contract
         Task<Theater> AddTheaterAsync(Theater theater);
         Task<bool> UpdateTheaterAsync(Theater theater);
         Task<bool> DeleteTheaterAsync(int id);
+        Task AddSeatsAsync(IEnumerable<Seat> seats);
+
     }
 }

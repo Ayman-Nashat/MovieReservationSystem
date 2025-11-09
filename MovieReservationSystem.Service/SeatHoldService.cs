@@ -103,6 +103,10 @@ namespace MovieReservationSystem.Service
         {
             return await _seatHoldRepository.GetHoldsByUserAsync(userId);
         }
+        public async Task<Seat?> GetByPositionAsync(int theaterId, int row, int column)
+        {
+            return await _seatHoldRepository.GetByPositionAsync(theaterId, row, column);
+        }
     }
 
 }

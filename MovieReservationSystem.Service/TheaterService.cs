@@ -50,5 +50,10 @@ namespace MovieReservationSystem.Service
             await _context.SaveChangesAsync();
             return true;
         }
+        public async Task AddSeatsAsync(IEnumerable<Seat> seats)
+        {
+            await _context.Seats.AddRangeAsync(seats);
+            await _context.SaveChangesAsync();
+        }
     }
 }

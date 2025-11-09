@@ -75,7 +75,23 @@ namespace Movie_Reservation_System.Controllers
             };
 
             await _theaterService.AddTheaterAsync(theater);
+            var seats = new List<Seat>();
+            for (char row = 'A'; row < 'A' + dto.Rows; row++)
+            {
+                for (int col = 1; col <= dto.Columns; col++)
+                {
+                    seats.Add(new Seat
+                    {
+                        SeatNumber = $"{row}{col}",
+                        TheaterId = theater.Id,
+                        RowNumber = row - 'A' + 1,
+                        ColumnNumber = col,
+                        SeatType = dto.TheaterType == "IMAX" ? "IMAX" : "Standard"
+                    });
+                }
+            }
 
+            await _theaterService.AddSeatsAsync(seats);
             var responseDto = new TheaterReadDTO
             {
                 Id = theater.Id,
@@ -91,6 +107,7 @@ namespace Movie_Reservation_System.Controllers
 
             return CreatedAtAction(nameof(GetTheaterById), new { id = theater.Id }, responseDto);
         }
+
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTheater(int id, [FromBody] TheaterUpdateDTO dto)

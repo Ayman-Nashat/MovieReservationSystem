@@ -9,9 +9,11 @@ namespace Movie_Reservation_System.Controllers
     public class SeatHoldController : ControllerBase
     {
         private readonly ISeatHoldService _seatHoldService;
-        public SeatHoldController(ISeatHoldService seatHoldService)
+        private readonly IShowtimeService _showtimeService;
+        public SeatHoldController(ISeatHoldService seatHoldService, IShowtimeService showtimeService)
         {
             _seatHoldService = seatHoldService;
+            _showtimeService = showtimeService;
         }
 
         [HttpPost]
@@ -21,23 +23,37 @@ namespace Movie_Reservation_System.Controllers
             var userId = User.FindFirst("sub")?.Value ?? User.Identity?.Name;
             if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
+            if (dto.SeatId == null && (dto.RowNumber == null || dto.ColumnNumber == null))
+                return BadRequest("Provide seatId or rowNumber+columnNumber.");
+
+            int seatId;
+            if (dto.SeatId.HasValue)
+            {
+                seatId = dto.SeatId.Value;
+            }
+            else
+            {
+                var showtime = await _showtimeService.GetShowtimeByIdAsync(dto.ShowtimeId);
+                if (showtime == null) return NotFound("Showtime not found.");
+
+                var seat = await _seatHoldService.GetByPositionAsync(
+                    showtime.TheaterId, dto.RowNumber!.Value, dto.ColumnNumber!.Value);
+                if (seat == null) return NotFound("Seat not found for given row/column.");
+
+                seatId = seat.Id;
+            }
+
             try
             {
-                var hold = await _seatHoldService.HoldSeatAsync(userId, dto.ShowtimeId, dto.SeatId, dto.HoldMinutes);
-                return Ok(new
-                {
-                    hold.Id,
-                    hold.ShowtimeId,
-                    hold.SeatId,
-                    hold.UserId,
-                    hold.ExpiresAt
-                });
+                var hold = await _seatHoldService.HoldSeatAsync(userId, dto.ShowtimeId, seatId, dto.HoldMinutes);
+                return Ok(new { hold.Id, hold.ShowtimeId, hold.SeatId, hold.UserId, hold.ExpiresAt });
             }
             catch (InvalidOperationException ex)
             {
                 return Conflict(new { message = ex.Message });
             }
         }
+
 
         [HttpDelete]
         //[Authorize]

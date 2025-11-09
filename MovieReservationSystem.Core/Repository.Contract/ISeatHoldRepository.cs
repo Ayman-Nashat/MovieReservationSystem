@@ -11,5 +11,6 @@ namespace MovieReservationSystem.Core.Interfaces
         Task RemoveExpiredHoldsAsync();
         Task<IEnumerable<SeatHold>> GetHoldsByUserAsync(string userId);
         Task SaveChangesAsync();
+        Task<Seat?> GetByPositionAsync(int theaterId, int row, int column);
     }
 }
