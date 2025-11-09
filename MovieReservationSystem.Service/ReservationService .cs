@@ -76,5 +76,11 @@ namespace MovieReservationSystem.Core.Services
             await _reservationRepository.UpdateReservationAsync(reservation);
             await _reservationRepository.SaveChangesAsync();
         }
+
+        public async Task<bool> IsSeatReservedAsync(int showtimeId, int seatId)
+        {
+            return await _reservationRepository.IsSeatReservedAsync(showtimeId, seatId);
+        }
+
     }
 }

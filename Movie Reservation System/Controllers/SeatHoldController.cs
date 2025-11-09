@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Movie_Reservation_System.DTOs.Seathold;
+using MovieReservationSystem.Core.Interfaces;
 using MovieReservationSystem.Core.Service.Contract;
 
 namespace Movie_Reservation_System.Controllers
@@ -10,10 +11,15 @@ namespace Movie_Reservation_System.Controllers
     {
         private readonly ISeatHoldService _seatHoldService;
         private readonly IShowtimeService _showtimeService;
-        public SeatHoldController(ISeatHoldService seatHoldService, IShowtimeService showtimeService)
+        private readonly ISeatService _seatService;
+        private readonly IReservationService _reservationService;
+
+        public SeatHoldController(ISeatHoldService seatHoldService, IShowtimeService showtimeService, ISeatService seatService, IReservationService reservationService)
         {
             _seatHoldService = seatHoldService;
             _showtimeService = showtimeService;
+            _seatService = seatService;
+            _reservationService = reservationService;
         }
 
         [HttpPost]
@@ -23,24 +29,27 @@ namespace Movie_Reservation_System.Controllers
             var userId = User.FindFirst("sub")?.Value ?? User.Identity?.Name;
             if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
-            if (dto.SeatId == null && (dto.RowNumber == null || dto.ColumnNumber == null))
-                return BadRequest("Provide seatId or rowNumber+columnNumber.");
+            if (dto == null || dto.ShowtimeId <= 0 || dto.SeatId == null)
+                return BadRequest("showtimeId and seatId are required.");
 
-            int seatId;
-            if (dto.SeatId.HasValue)
+            int seatId = dto.SeatId.Value;
+
+            var showtime = await _showtimeService.GetShowtimeByIdAsync(dto.ShowtimeId);
+            if (showtime == null) return NotFound("Showtime not found.");
+
+            var seat = await _seatService.GetByPositionAsync(seatId);
+            if (seat == null) return NotFound("Seat not found.");
+
+            if (seat.TheaterId != showtime.TheaterId)
+                return BadRequest(new { message = "Seat does not belong to the showtime's theater." });
+
+            if (await _reservationService.IsSeatReservedAsync(dto.ShowtimeId, seatId))
+                return Conflict(new { message = "Seat is already reserved for this showtime." });
+
+            var isHeld = await _seatHoldService.IsSeatHeldAsync(dto.ShowtimeId, seatId);
+            if (isHeld)
             {
-                seatId = dto.SeatId.Value;
-            }
-            else
-            {
-                var showtime = await _showtimeService.GetShowtimeByIdAsync(dto.ShowtimeId);
-                if (showtime == null) return NotFound("Showtime not found.");
-
-                var seat = await _seatHoldService.GetByPositionAsync(
-                    showtime.TheaterId, dto.RowNumber!.Value, dto.ColumnNumber!.Value);
-                if (seat == null) return NotFound("Seat not found for given row/column.");
-
-                seatId = seat.Id;
+                return Conflict(new { message = "Seat is currently on hold by another user." });
             }
 
             try
@@ -53,6 +62,7 @@ namespace Movie_Reservation_System.Controllers
                 return Conflict(new { message = ex.Message });
             }
         }
+
 
 
         [HttpDelete]

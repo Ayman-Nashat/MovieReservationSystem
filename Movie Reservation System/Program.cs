@@ -47,10 +47,13 @@ namespace Movie_Reservation_System
             builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
             builder.Services.AddScoped<IReservationService, ReservationService>();
             builder.Services.AddScoped<ISeatHoldRepository, SeatHoldRepository>();
+            builder.Services.AddScoped<ISeatHoldService, SeatHoldService>();
             builder.Services.AddScoped<IMovieService, MovieService>();
             builder.Services.AddScoped<ITheaterService, TheaterService>();
             builder.Services.AddScoped<ITheaterRepository, TheaterRepository>();
             builder.Services.AddScoped<IGenreService, GenreService>();
+            builder.Services.AddScoped<ISeatService, SeatService>();
+            builder.Services.AddScoped<ISeatRepository, SeatRepository>();
             builder.Services.AddTransient<IMailService, EmailSettings>();
             builder.Services.AddScoped<IShowtimeRepository, ShowtimeRepository>();
             builder.Services.AddScoped<IShowtimeService, ShowtimeService>();

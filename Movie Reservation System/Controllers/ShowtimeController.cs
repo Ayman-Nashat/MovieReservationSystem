@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Movie_Reservation_System.DTOs.ShowTime;
 using MovieReservationSystem.Core.Entities;
+using MovieReservationSystem.Core.Interfaces;
 using MovieReservationSystem.Core.Service.Contract;
 
 namespace Movie_Reservation_System.Controllers
@@ -11,11 +12,17 @@ namespace Movie_Reservation_System.Controllers
     {
         private readonly IShowtimeService _showtimeService;
         private readonly ITheaterService _theaterService;
+        private readonly IReservationService _reservationService;
+        private readonly ISeatHoldService _seatHoldService;
+        private readonly ISeatService _seatService;
 
-        public ShowtimeController(IShowtimeService showtimeService, ITheaterService theaterService)
+        public ShowtimeController(IShowtimeService showtimeService, ITheaterService theaterService, ISeatHoldService seatHoldService, IReservationService reservationService, ISeatService seatService)
         {
             _showtimeService = showtimeService;
             _theaterService = theaterService;
+            _seatHoldService = seatHoldService;
+            _reservationService = reservationService;
+            _seatService = seatService;
         }
 
         [HttpGet]
@@ -39,7 +46,6 @@ namespace Movie_Reservation_System.Controllers
             return Ok(result);
         }
 
-        // GET: api/Showtime/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -59,7 +65,6 @@ namespace Movie_Reservation_System.Controllers
 
             return Ok(res);
         }
-
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AddShowtimeDto dto)
         {
@@ -103,8 +108,6 @@ namespace Movie_Reservation_System.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
-
-
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateShowtimeDto dto)
         {
@@ -135,7 +138,6 @@ namespace Movie_Reservation_System.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -144,6 +146,45 @@ namespace Movie_Reservation_System.Controllers
 
             return NoContent();
         }
+        [HttpGet("{showtimeId}/seats")]
+        public async Task<IActionResult> GetSeatMap(int showtimeId)
+        {
+            var showtime = await _showtimeService.GetShowtimeByIdAsync(showtimeId);
+            if (showtime == null)
+                return NotFound("Showtime not found.");
+
+            var theaterId = showtime.TheaterId;
+
+            // Get all seats for this theater
+            var allSeats = await _seatService.GetSeatsByTheaterIdAsync(theaterId);
+
+            // Get reservations for this showtime
+            var reservedSeatIds = (await _reservationService.GetShowtimeReservationsAsync(showtimeId))
+                .Select(r => r.SeatId)
+                .ToHashSet();
+
+            // Get active holds for this showtime
+            var activeHolds = await _seatHoldService.GetActiveHoldsAsync(showtimeId, allSeats.Select(s => s.Id));
+            var heldSeatIds = activeHolds.Select(h => h.SeatId).ToHashSet();
+
+            // Build result
+            var seatMap = allSeats.Select(seat => new
+            {
+                seat.Id,
+                seat.RowNumber,
+                seat.ColumnNumber,
+                seat.SeatNumber,
+                seat.SeatType,
+                Status = reservedSeatIds.Contains(seat.Id)
+                    ? "reserved"
+                    : heldSeatIds.Contains(seat.Id)
+                        ? "held"
+                        : "available"
+            });
+
+            return Ok(seatMap);
+        }
+
 
     }
 }

@@ -10,5 +10,6 @@ namespace MovieReservationSystem.Core.Interfaces
         Task<Reservation?> GetReservationByIdAsync(int id);
         Task ConfirmReservationAsync(int reservationId);
         Task CancelReservationAsync(int reservationId);
+        Task<bool> IsSeatReservedAsync(int showtimeId, int seatId);
     }
 }

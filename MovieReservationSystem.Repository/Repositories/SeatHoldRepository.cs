@@ -58,18 +58,5 @@ namespace MovieReservationSystem.Repository.Repositories
             if (expiredHolds.Any())
                 _context.SeatHolds.RemoveRange(expiredHolds);
         }
-
-        public new async Task SaveChangesAsync()
-        {
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task<Seat?> GetByPositionAsync(int theaterId, int row, int column)
-        {
-            return await _context.Seats
-                .FirstOrDefaultAsync(s => s.TheaterId == theaterId
-                                       && s.RowNumber == row
-                                       && s.ColumnNumber == column);
-        }
     }
 }

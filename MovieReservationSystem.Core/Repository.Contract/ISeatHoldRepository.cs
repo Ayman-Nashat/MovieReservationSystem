@@ -1,8 +1,9 @@
 ﻿using MovieReservationSystem.Core.Entities;
+using MovieReservationSystem.Core.Repository.Contract;
 
 namespace MovieReservationSystem.Core.Interfaces
 {
-    public interface ISeatHoldRepository
+    public interface ISeatHoldRepository : IGenericRepository<SeatHold, int>
     {
         Task<bool> IsSeatHeldAsync(int showtimeId, int seatId);
         Task AddHoldAsync(SeatHold hold);
@@ -10,7 +11,5 @@ namespace MovieReservationSystem.Core.Interfaces
         Task RemoveHoldsAsync(IEnumerable<SeatHold> holds);
         Task RemoveExpiredHoldsAsync();
         Task<IEnumerable<SeatHold>> GetHoldsByUserAsync(string userId);
-        Task SaveChangesAsync();
-        Task<Seat?> GetByPositionAsync(int theaterId, int row, int column);
     }
 }
