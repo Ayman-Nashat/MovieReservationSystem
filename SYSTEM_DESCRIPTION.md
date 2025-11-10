@@ -570,3 +570,4 @@ This is a **fully functional Movie Reservation System** built with ASP.NET Core 
 
 The system follows clean architecture principles with clear separation between API, Service, Repository, and Core layers. All entities have proper relationships, constraints, and business logic validation.
 
+

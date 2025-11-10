@@ -56,6 +56,7 @@ namespace Movie_Reservation_System.Controllers
         }
         [HttpPost("login")]
         [AllowAnonymous]
+        [Authorize(Roles = "User")]
         public async Task<IActionResult> Login([FromBody] LoginDTO model)
         {
             if (!ModelState.IsValid)
@@ -72,22 +73,22 @@ namespace Movie_Reservation_System.Controllers
             var roles = await _userManager.GetRolesAsync(user);
 
             var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email)
-            };
+    {
+        new Claim(ClaimTypes.Name, user.UserName),
+        new Claim(ClaimTypes.NameIdentifier, user.Id),
+        new Claim(JwtRegisteredClaimNames.Email, user.Email)
+    };
 
             foreach (var role in roles)
                 claims.Add(new Claim(ClaimTypes.Role, role));
 
-            //// 5️⃣ Generate JWT (you’ll implement ITokenService)
-            //var token = _tokenService.GenerateToken(claims);
+            // JWT generation temporarily skipped
+            // var token = _tokenService.GenerateToken(claims);
 
             return Ok(new
             {
                 message = "Login successful!",
-                //token,
+                // token,
                 user = new
                 {
                     user.UserName,
