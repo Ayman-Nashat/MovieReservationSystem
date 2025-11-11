@@ -4,17 +4,38 @@ using Microsoft.AspNetCore.Mvc;
 using Movie_Reservation_System.DTOs.Account;
 using MovieReservationSystem.Core.Entities;
 using MovieReservationSystem.Core.Service.Contract;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace Movie_Reservation_System.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController(UserManager<User> _userManager, SignInManager<User> _signInManager, IMailService _mailService, ILogger<AccountController> _logger, RoleManager<IdentityRole> _roleManager) : ControllerBase
+    public class AccountController : ControllerBase
     {
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
+        private readonly IMailService _mailService;
+        private readonly ILogger<AccountController> _logger;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IAuthService _authService;
+
+        public AccountController(
+            UserManager<User> userManager,
+            SignInManager<User> signInManager,
+            IMailService mailService,
+            ILogger<AccountController> logger,
+            RoleManager<IdentityRole> roleManager,
+            IAuthService authService)
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _mailService = mailService;
+            _logger = logger;
+            _roleManager = roleManager;
+            _authService = authService;
+        }
 
         [HttpPost("register")]
+        [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] RegisterDTO model)
         {
             if (!ModelState.IsValid)
@@ -32,6 +53,12 @@ namespace Movie_Reservation_System.Controllers
             if (!result.Succeeded)
                 return BadRequest(new { status = "Error", message = "User creation failed", errors = result.Errors });
 
+            // Add user to role
+            if (await _roleManager.RoleExistsAsync("User"))
+                await _userManager.AddToRoleAsync(user, "User");
+            else
+                return BadRequest("User role does not exist");
+
             // Generate email confirmation token
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
@@ -46,17 +73,13 @@ namespace Movie_Reservation_System.Controllers
                 Body = $"Please confirm your email by clicking this link: \n{confirmationLink}"
             };
 
-            if (await _roleManager.RoleExistsAsync("User"))
-                await _userManager.AddToRoleAsync(user, "User");
-            else
-                return BadRequest("User role does not exist");
             _mailService.SendEmail(email);
 
             return Ok(new { status = "Success", message = "User created & confirmation email sent successfully." });
         }
+
         [HttpPost("login")]
         [AllowAnonymous]
-        [Authorize(Roles = "User")]
         public async Task<IActionResult> Login([FromBody] LoginDTO model)
         {
             if (!ModelState.IsValid)
@@ -64,41 +87,37 @@ namespace Movie_Reservation_System.Controllers
 
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
-                return Unauthorized("Invalid email or password.");
+                return Unauthorized(new { message = "Invalid email or password." });
+
+            // Check if email is confirmed
+            if (!await _userManager.IsEmailConfirmedAsync(user))
+                return Unauthorized(new { message = "Please confirm your email before logging in." });
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
             if (!result.Succeeded)
-                return Unauthorized("Invalid email or password.");
+                return Unauthorized(new { message = "Invalid email or password." });
 
+            // Generate JWT token
+            var token = await _authService.CreateTokenAsync(user, _userManager);
             var roles = await _userManager.GetRolesAsync(user);
-
-            var claims = new List<Claim>
-    {
-        new Claim(ClaimTypes.Name, user.UserName),
-        new Claim(ClaimTypes.NameIdentifier, user.Id),
-        new Claim(JwtRegisteredClaimNames.Email, user.Email)
-    };
-
-            foreach (var role in roles)
-                claims.Add(new Claim(ClaimTypes.Role, role));
-
-            // JWT generation temporarily skipped
-            // var token = _tokenService.GenerateToken(claims);
 
             return Ok(new
             {
+                status = "Success",
                 message = "Login successful!",
-                // token,
+                token = token,
                 user = new
                 {
                     user.UserName,
                     user.Email,
-                    Role = roles.FirstOrDefault()
+                    user.Name,
+                    role = roles.FirstOrDefault()
                 }
             });
         }
 
         [HttpGet("ConfirmEmail")]
+        [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail(string token, string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
@@ -113,36 +132,7 @@ namespace Movie_Reservation_System.Controllers
             return StatusCode(StatusCodes.Status500InternalServerError,
                 new { status = "Error", message = "Email verification failed." });
         }
-        //[HttpPost("send-reset-password-link")]
-        //public async Task<IActionResult> SendResetPasswordLink([FromBody] ForgetPasswordDto model)
-        //{
-        //    if (!ModelState.IsValid)
-        //        return BadRequest(ModelState);
 
-        //    var user = await _userManager.FindByEmailAsync(model.Email);
-        //    if (user == null) return NotFound(new { message = "No user found with this email." });
-
-        //    // Generate password reset token
-        //    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-
-        //    // Build frontend reset link
-        //    var resetLink = Url.Action("ResetPassword", "Account", new { email = model.Email, token }, Request.Scheme);
-
-        //    // Encode the token (URL safe)
-        //    var encodedToken = WebUtility.UrlEncode(token);
-
-
-        //    // Send email
-        //    var email = new Email
-        //    {
-        //        To = model.Email,
-        //        Subject = "Reset Password",
-        //        Body = $"Click the link to reset your password: {resetLink}"
-        //    };
-        //    _mailService.SendEmail(email);
-
-        //    return Ok(new { message = "Reset password link has been sent to your email." });
-        //}
         [HttpPost("ForgotPassword")]
         [AllowAnonymous]
         public async Task<IActionResult> ForgotPassword(string email)
@@ -183,6 +173,7 @@ namespace Movie_Reservation_System.Controllers
                     new { Status = "Error", Message = "Failed to send reset code. Please try again later." });
             }
         }
+
         [HttpPost("ResetPassword")]
         [AllowAnonymous]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto model)
@@ -222,7 +213,5 @@ namespace Movie_Reservation_System.Controllers
             return StatusCode(StatusCodes.Status500InternalServerError,
                 new { Status = "Error", Message = "Password reset failed. Please try again." });
         }
-
-
     }
 }

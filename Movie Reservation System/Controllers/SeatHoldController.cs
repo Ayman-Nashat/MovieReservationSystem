@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Movie_Reservation_System.DTOs.Seathold;
 using MovieReservationSystem.Core.Interfaces;
 using MovieReservationSystem.Core.Service.Contract;
@@ -23,7 +24,7 @@ namespace Movie_Reservation_System.Controllers
         }
 
         [HttpPost]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> HoldSeat([FromBody] HoldSeatRequest dto)
         {
             var userId = User.FindFirst("sub")?.Value ?? User.Identity?.Name;
