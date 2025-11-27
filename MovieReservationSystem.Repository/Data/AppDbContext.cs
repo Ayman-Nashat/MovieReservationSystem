@@ -19,6 +19,7 @@ namespace MovieReservationSystem.Repository.Data
         public DbSet<Genre> Genres { get; set; }
         public DbSet<MovieGenre> MovieGenres { get; set; }
         public DbSet<SeatHold> SeatHolds { get; set; }
+        public DbSet<Payment> Payments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -81,6 +82,11 @@ namespace MovieReservationSystem.Repository.Data
             builder.Entity<Showtime>()
                 .Property(s => s.TicketPrice)
                 .HasPrecision(18, 2);
+
+            builder.Entity<Payment>()
+                .HasIndex(p => p.PaymentIntentId)
+                .IsUnique();
+
 
         }
     }

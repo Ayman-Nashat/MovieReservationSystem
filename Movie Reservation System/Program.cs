@@ -93,6 +93,7 @@ namespace Movie_Reservation_System
             builder.Services.AddScoped<IShowtimeRepository, ShowtimeRepository>();
             builder.Services.AddScoped<IShowtimeService, ShowtimeService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
 
             #endregion
 
