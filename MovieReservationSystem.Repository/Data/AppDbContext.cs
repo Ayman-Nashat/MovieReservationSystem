@@ -87,7 +87,9 @@ namespace MovieReservationSystem.Repository.Data
                 .HasIndex(p => p.PaymentIntentId)
                 .IsUnique();
 
-
+            builder.Entity<Payment>()
+                .Property(p => p.Amount)
+                .HasPrecision(18, 2);
         }
     }
 }
