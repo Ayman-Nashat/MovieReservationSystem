@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Movie_Reservation_System.DTOs.Reservation;
 using MovieReservationSystem.Core.Interfaces;
 
@@ -16,6 +17,7 @@ namespace Movie_Reservation_System.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto dto)
         {
             if (dto == null || string.IsNullOrWhiteSpace(dto.UserId))
@@ -33,6 +35,7 @@ namespace Movie_Reservation_System.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetReservationById(int id)
         {
             var reservation = await _reservationService.GetReservationByIdAsync(id);
@@ -43,6 +46,7 @@ namespace Movie_Reservation_System.Controllers
         }
 
         [HttpGet("user/{userId}")]
+        [Authorize]
         public async Task<IActionResult> GetUserReservations(string userId)
         {
             var reservations = await _reservationService.GetUserReservationsAsync(userId);
@@ -57,6 +61,7 @@ namespace Movie_Reservation_System.Controllers
         }
 
         [HttpPut("{id}/confirm")]
+        [Authorize]
         public async Task<IActionResult> ConfirmReservation(int id)
         {
             try
@@ -71,6 +76,7 @@ namespace Movie_Reservation_System.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> CancelReservation(int id)
         {
             try

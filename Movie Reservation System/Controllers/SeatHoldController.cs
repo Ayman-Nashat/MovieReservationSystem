@@ -67,7 +67,7 @@ namespace Movie_Reservation_System.Controllers
 
 
         [HttpDelete]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> ReleaseHold([FromBody] ReleaseSeatRequest dto)
         {
             var userId = User.FindFirst("sub")?.Value ?? User.Identity?.Name;
@@ -94,7 +94,7 @@ namespace Movie_Reservation_System.Controllers
             return Ok(result);
         }
         [HttpGet("user")]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> GetUserHolds()
         {
             var userId = User.FindFirst("sub")?.Value ?? User.Identity?.Name;
@@ -106,7 +106,7 @@ namespace Movie_Reservation_System.Controllers
         }
 
         [HttpDelete("removeExpired")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RemoveExpired()
         {
             await _seatHoldService.RemoveExpiredHoldsAsync();

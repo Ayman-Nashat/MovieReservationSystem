@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Movie_Reservation_System.DTOs.Genre;
 using MovieReservationSystem.Core.Entities;
 using MovieReservationSystem.Core.Service.Contract;
@@ -15,8 +16,8 @@ namespace Movie_Reservation_System.Controllers
 
         public GenresController(IGenreService genreService, IMovieService movieService)
         {
-            _genreService = genreService;
-            _movieService = movieService;
+            _genreService = genreService ?? throw new ArgumentNullException(nameof(genreService));
+            _movieService = movieService ?? throw new ArgumentNullException(nameof(movieService));
         }
         [HttpGet]
         public async Task<IActionResult> GetAll()
@@ -34,6 +35,7 @@ namespace Movie_Reservation_System.Controllers
             return Ok(genre);
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Add([FromBody] AddGenreDTO genre)
         {
             Genre genre1 = new Genre
@@ -46,6 +48,7 @@ namespace Movie_Reservation_System.Controllers
             return CreatedAtAction(nameof(GetById), new { id = genre1.Id }, genre);
         }
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(int id, [FromBody] AddGenreDTO genreDto)
         {
             var existingGenre = await _genreService.GetByIdAsync(id);
@@ -60,6 +63,7 @@ namespace Movie_Reservation_System.Controllers
             return Ok(existingGenre);
         }
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var genre = await _genreService.GetByIdAsync(id);
@@ -73,6 +77,7 @@ namespace Movie_Reservation_System.Controllers
         }
 
         [HttpPost("{genreId}/add-to-movie/{movieId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddGenreToMovie(int genreId, int movieId)
         {
             var movie = await _movieService.GetMovieByIdAsync(movieId);

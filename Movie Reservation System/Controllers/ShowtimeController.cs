@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Movie_Reservation_System.DTOs.ShowTime;
 using MovieReservationSystem.Core.Entities;
 using MovieReservationSystem.Core.Interfaces;
@@ -66,6 +67,7 @@ namespace Movie_Reservation_System.Controllers
             return Ok(res);
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([FromBody] AddShowtimeDto dto)
         {
             if (!ModelState.IsValid)
@@ -109,6 +111,7 @@ namespace Movie_Reservation_System.Controllers
             }
         }
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateShowtimeDto dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -139,6 +142,7 @@ namespace Movie_Reservation_System.Controllers
             }
         }
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var deleted = await _showtimeService.DeleteShowtimeAsync(id);

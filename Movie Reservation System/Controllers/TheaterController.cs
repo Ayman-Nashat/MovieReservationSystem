@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Movie_Reservation_System.DTOs.Theater;
 using MovieReservationSystem.Core.Entities;
 using MovieReservationSystem.Core.Service.Contract;
@@ -58,6 +59,7 @@ namespace Movie_Reservation_System.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateTheater([FromBody] TheaterCreateDTO dto)
         {
             if (!ModelState.IsValid)
@@ -110,6 +112,7 @@ namespace Movie_Reservation_System.Controllers
 
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateTheater(int id, [FromBody] TheaterUpdateDTO dto)
         {
             if (!ModelState.IsValid)
@@ -148,6 +151,7 @@ namespace Movie_Reservation_System.Controllers
 
         // DELETE: api/Theater/{id}
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteTheater(int id)
         {
             var theater = await _theaterService.GetTheaterByIdAsync(id);
