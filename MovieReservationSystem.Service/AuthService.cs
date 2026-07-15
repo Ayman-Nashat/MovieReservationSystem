@@ -23,9 +23,8 @@ namespace MovieReservationSystem.Service
             var authClaims = new List<Claim>()
             {
                 new Claim(ClaimTypes.Name,user.Name),
-                new Claim(ClaimTypes.Email,user.Email),
-
-
+                new Claim(ClaimTypes.Email,user.Email??string.Empty),
+                new Claim(ClaimTypes.NameIdentifier,user.Id),
             };
             var userRoles = await userManager.GetRolesAsync(user);
             foreach (var userRole in userRoles)

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Movie_Reservation_System.DTOs.Seathold;
 using MovieReservationSystem.Core.Interfaces;
 using MovieReservationSystem.Core.Service.Contract;
+using System.Security.Claims;
 
 namespace Movie_Reservation_System.Controllers
 {
@@ -27,7 +28,7 @@ namespace Movie_Reservation_System.Controllers
         [Authorize]
         public async Task<IActionResult> HoldSeat([FromBody] HoldSeatRequest dto)
         {
-            var userId = User.FindFirst("sub")?.Value ?? User.Identity?.Name;
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.Identity?.Name;
             if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
             if (dto == null || dto.ShowtimeId <= 0 || dto.SeatId == null)
@@ -70,7 +71,7 @@ namespace Movie_Reservation_System.Controllers
         [Authorize]
         public async Task<IActionResult> ReleaseHold([FromBody] ReleaseSeatRequest dto)
         {
-            var userId = User.FindFirst("sub")?.Value ?? User.Identity?.Name;
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.Identity?.Name;
             if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
             await _seatHoldService.ReleaseHoldAsync(userId, dto.ShowtimeId, dto.SeatId);
@@ -97,7 +98,7 @@ namespace Movie_Reservation_System.Controllers
         [Authorize]
         public async Task<IActionResult> GetUserHolds()
         {
-            var userId = User.FindFirst("sub")?.Value ?? User.Identity?.Name;
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.Identity?.Name;
             if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
             var holds = await _seatHoldService.GetHoldsByUserAsync(userId);
